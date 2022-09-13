@@ -2,25 +2,34 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 
+struct SystemCoord;
+
 struct Point
 {
-    double x = 0;
-    double y = 0;
+    double cx;
+    double cy;
+
+    Point(double x = 0, double y = 0) : cx(x), cy(y) {}
 };
 
-class Graphic2dVector
+
+class Vector
 {
 private:
     double cx, cy;
     double clen;
 
+    Point capp_point = Point(0 , 0);
+
     sf::VertexArray cline = sf::VertexArray(sf::Lines, 2);
     sf::Color ccolor = sf::Color::White;
 
 public:
-    Graphic2dVector() : Graphic2dVector(0, 0) {}
-    Graphic2dVector(double x, double y) : cx(x), cy(y), clen(NAN) {}
-    Graphic2dVector(const Graphic2dVector& init) : cx(init.cx), cy(init.cy), clen(init.clen) {}
+    Vector() : Vector(0, 0) {}
+    Vector(double x, double y) : cx(x), cy(y), clen(NAN) {}
+    Vector(const Vector& init) : cx(init.cx), cy(init.cy), clen(init.clen) {}
+    Vector(double x, double y, const SystemCoord sys_coord);
+
 
     double length() 
     { 
@@ -31,26 +40,39 @@ public:
         return clen;
     }
 
+    void setAppPoint(const Point& app_point)
+    {
+        capp_point = app_point;
+    }
+
+    void setAppPoint(int x, int y)
+    {
+        capp_point = Point(x, y);
+    }
+
     void setColor(const sf::Color& color)
     {
         ccolor = color;
     }
 
+    void SetX(double x, const SystemCoord& sys_coord);
+    void SetY(double y, const SystemCoord& sys_coord);
+
     void draw(sf::RenderWindow& window)
     {
-        cline[0].position = sf::Vector2f(0,0);
-        cline[1].position = sf::Vector2f(cx, cy);
+        cline[0].position = sf::Vector2f(capp_point.cx + 1, capp_point.cy);
+        cline[1].position = sf::Vector2f(capp_point.cx + cx + 1, capp_point.cy + cy);
         cline[0].color    = ccolor;
         cline[1].color    = ccolor;
         window.draw(cline);
     }
 
-    Graphic2dVector operator+(const Graphic2dVector& rvec) const
+    Vector operator+(const Vector& rvec) const
     {
-        return Graphic2dVector(cx + rvec.cx, cy + rvec.cy);
+        return Vector(cx + rvec.cx, cy + rvec.cy);
     }
 
-    Graphic2dVector& operator+=(const Graphic2dVector& rvec)
+    Vector& operator+=(const Vector& rvec)
     {
         cx += rvec.cx;
         cy += rvec.cy;
@@ -58,12 +80,12 @@ public:
         return *this;
     }
 
-    Graphic2dVector operator-(const Graphic2dVector& rvec) const
+    Vector operator-(const Vector& rvec) const
     {
-        return Graphic2dVector(cx - rvec.cx, cy - rvec.cy);
+        return Vector(cx - rvec.cx, cy - rvec.cy);
     }
 
-    Graphic2dVector& operator-=(const Graphic2dVector& rvec)
+    Vector& operator-=(const Vector& rvec)
     {
         cx -= rvec.cx;
         cy -= rvec.cy;
@@ -71,20 +93,50 @@ public:
         return *this;
     }
 
-    int operator*(const Graphic2dVector& rvec) const 
+    int operator*(const Vector& rvec) const 
     {
         return cx * rvec.cx + cy * rvec.cy; 
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const Graphic2dVector& vec)
+    friend std::ostream& operator<<(std::ostream& out, const Vector& vec)
     {
         out << "{ " << vec.cx << ", " << vec.cy << " }";
         return out;
     }
 
-    friend std::istream& operator>>(std::istream& in, Graphic2dVector& vec)
+    friend std::istream& operator>>(std::istream& in, Vector& vec)
     {
         in >> vec.cx >> vec.cy;
         return in;
     }
 };
+
+struct SystemCoord
+{
+    Point cstart_point;
+    Vector ce1;
+    Vector ce2;
+
+    SystemCoord(const Point& start_point, const Vector& e1, const Vector& e2) : cstart_point(start_point), ce1(e1), ce2(e2) {}
+};
+
+
+Vector::Vector(double x, double y, const SystemCoord sys_coord)
+{
+    capp_point = sys_coord.cstart_point;
+    cx = sys_coord.ce1.cx * x + sys_coord.ce2.cx * y;
+    cy = sys_coord.ce1.cy * x + sys_coord.ce2.cy * y;
+    clen = NAN;
+}
+
+void Vector::SetX(double x, const SystemCoord& sys_coord)
+{
+    cx = sys_coord.ce1.cx * x + sys_coord.ce2.cx * cy;
+    clen = NAN;
+}
+
+void Vector::SetY(double y, const SystemCoord& sys_coord)
+{
+    cy = sys_coord.ce1.cy * cx + sys_coord.ce2.cy * y;
+    clen = NAN;
+}
