@@ -3,9 +3,8 @@
 
 int main()
 {
-    Graphic2dVector vec(100, 20);
+    Graphic2dVector vec;
     std::cin >> vec;
-    std::cout << vec;
 
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
     sf::CircleShape shape(100.f);
