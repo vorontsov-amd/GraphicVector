@@ -1,14 +1,26 @@
 #include "vector.h"
 
-void Vector::setAppPoint(const Point& app_point, const SystemCoord& sys_coord)
+void Vector::setAppPoint(const Point& app_point, const SystemCoord& sys)
 {
-    capp_point.cx = app_point.cx + sys_coord.cstart_point.cx;
-    capp_point.cy = app_point.cy + sys_coord.cstart_point.cy;
+    BasicVector to_app_point(app_point.cx, app_point.cy, sys);
+    
+    double x = GetX() + to_app_point.GetX() - capp_point.cx;
+    double y = GetY() + to_app_point.GetY() - capp_point.cy;
+    SetX(x);
+    SetY(y);
+
+    capp_point.cx = to_app_point.GetX();
+    capp_point.cy = to_app_point.GetY();
     fillVertexArray();
 }
 
 void Vector::setAppPoint(const Point& app_point)
 {
+    double x = GetX() + app_point.cx - capp_point.cx;
+    double y = GetY() + app_point.cy - capp_point.cy;
+    SetX(x);
+    SetY(y);
+
     capp_point.cx = app_point.cx;
     capp_point.cy = app_point.cy;
     fillVertexArray();
@@ -25,6 +37,8 @@ void Vector::setColor(const sf::Color& color)
 
 void Vector::draw(sf::RenderWindow& window)
 {
+    if (GetX() == capp_point.cx && GetY() == capp_point.cy) return;
+    
     for (int dy = -cthickness; dy <= cthickness; ++dy)
     {
         for (int dx = -cthickness; dx <= cthickness; ++dx)
