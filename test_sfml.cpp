@@ -1,20 +1,19 @@
 #include "vector.h"
 #include <chrono>
 #include <thread>
-
 #include <SFML/Graphics.hpp>
 
 int main()
 {
-    Vector e1(1, 0);
-    Vector e2(0, -1);
-    Point  O(200, 200);
+    Vector e1 = {1, 0};
+    Vector e2 = {0, -1};
+    Point  O  = {200, 200};
     SystemCoord sys(O, e1, e2);
     Vector vec(120, 0, sys);
     vec.setColor(sf::Color::Red);
 
     Vector vec2(800, 0, sys);
-    vec2.setAppPoint(400, 0, sys);
+    vec2.setAppPoint(Point(400, 0), sys);
     std::cout << vec2 << '\n';
     
     sf::RenderWindow window(sf::VideoMode(1600, 900), "SOSAT!");
@@ -48,7 +47,7 @@ int main()
         vec.SetY(100 * sin(-t * 0.0003), sys);
         t++;
 
-        //window.draw(shape);
+        window.draw(shape);
         vec.draw(window);
         vec2.draw(window);
                 
