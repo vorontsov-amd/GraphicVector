@@ -9,12 +9,16 @@ int main()
     Vector e2 = {0, -1};
     Point  O  = {200, 200};
     SystemCoord sys(O, e1, e2);
+
+
     Vector vec(120, 0, sys);
     vec.setColor(sf::Color::Red);
+    vec.setThickness(Vector::medium);
 
     Vector vec2(800, 0, sys);
+    vec2.setThickness(Vector::thin);
+
     vec2.setAppPoint(Point(400, 0), sys);
-    std::cout << vec2 << '\n';
     
     sf::RenderWindow window(sf::VideoMode(1600, 900), "SOSAT!");
     sf::CircleShape shape(100.f);

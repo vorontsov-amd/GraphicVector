@@ -25,8 +25,32 @@ void Vector::setColor(const sf::Color& color)
 
 void Vector::draw(sf::RenderWindow& window)
 {
-    window.draw(cline);
-    window.draw(carrow);
+    for (int dy = -cthickness; dy <= cthickness; ++dy)
+    {
+        for (int dx = -cthickness; dx <= cthickness; ++dx)
+        {
+            moveFigure(dx, dy);
+            window.draw(cline);
+            window.draw(carrow);
+            moveFigure(-dx, -dy);
+        }
+    }
+}
+
+void Vector::moveFigure(int dx, int dy)
+{
+    cline[0].position.x += dx;
+    cline[0].position.y += dy;
+    cline[1].position.x += dx;
+    cline[1].position.y += dy;
+
+
+    carrow[0].position.x += dx;
+    carrow[0].position.y += dy;
+    carrow[1].position.x += dx;
+    carrow[1].position.y += dy;
+    carrow[2].position.x += dx;
+    carrow[2].position.y += dy;
 }
 
 void Vector::fillVertexArray()

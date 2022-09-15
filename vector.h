@@ -8,12 +8,12 @@
 class Vector : public BasicVector
 {
 public:
-    //enum class Thickness { thin, medium, bold };
+    enum Thickness { thin, medium, bold };
 private:
     Point capp_point       = Point(0 , 0);
     sf::VertexArray cline  = sf::VertexArray(sf::Lines, 2);
     sf::VertexArray carrow = sf::VertexArray(sf::LineStrip, 3);
-    //Thickness cthickness    = Thickness::thin;
+    Thickness cthickness   = Thickness::thin;
 
     void fillVertexArray();
     void createLine();
@@ -29,7 +29,7 @@ public:
     void SetX(double x, const SystemCoord& sys) { BasicVector::SetX(x, sys); fillVertexArray(); }
     void SetY(double y, const SystemCoord& sys) { BasicVector::SetY(y, sys); fillVertexArray(); }
 
-    //void setThickness(Thickness thickness) { cthickness = thickness; }
+    void setThickness(Thickness thickness) { cthickness = thickness; }
     void setAppPoint(const Point& app_point, const SystemCoord& sys_coord);
     void setAppPoint(const Point& app_point);
     void setColor(const sf::Color& color);
